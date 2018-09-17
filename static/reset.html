@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Snackychina</title>
+  <link href="https://dn-avoscloud.qbox.me/statics/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+
+  <h3>Reset password</h3>
+  <hr>
+
+  <form class="form-horizontal form login-form" name="resetform">
+    <!-- <legend>重置密码</legend> -->
+
+    <div class="alert" style="display:none" id="error">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="inputEmail">New password</label>
+      <div class="col-sm-4">
+        <input type="password" id="inputEmail" class="form-control" placeholder="new password" name="password" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="inputPassword">Enter again</label>
+      <div class="col-sm-4">
+        <input type="password" id="inputPassword" class="form-control" placeholder="new password" name="password1"
+               required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-4">
+        <button type="button" class="btn btn-default" id="reset">Reset</button>
+      </div>
+    </div>
+
+  </form>
+
+
+</div><!--end container-->
+<script src="https://dn-avoscloud.qbox.me/statics/jquery.min.js"></script>
+<script src="https://dn-avoscloud.qbox.me/statics/jquery.jsonp.js"></script>
+
+<script type="text/javascript">
+  //获得token
+  var token = location.search.match(/token=(\w*)/)
+  if (token && token[1]) {
+    token = token[1]
+  }
+  $(function () {
+    $('#reset').click(function () {
+      var p = $('[name=password]')
+      var p1 = $('[name=password1]')
+      if (p.val() != p1.val()) {
+        $('#error').show()
+        $('#error').text('You must enter the same password')
+      }
+      else if (p.val().length < 6) {
+        $('#error').show()
+        $('#error').text('The length should longer than 6 character')
+      }
+      else if (p.val() && p1.val() && p.val() == p1.val()) {
+        var url = "https://us.leancloud.cn/1.1/resetPassword/"
+        $.jsonp({
+          url: url + token,
+          data: {'password': p.val()},
+          callbackParameter: 'callback',
+          cache: false,
+          success: function (result) {
+            $('#error').show()
+            if (result.error) {
+              $('#error').text(result.error)
+            } else {
+              $('#error').text('Reset successfully')
+              setTimeout(function () {
+                location.href= 'https://snackychina.com'
+              }, 1000)
+            }
+
+          },
+          error: function (result, text) {
+            $('#error').text('Server error, try again later')
+          }
+        })
+      }
+
+    })
+  })
+
+
+</script>
+</body>
+</html>

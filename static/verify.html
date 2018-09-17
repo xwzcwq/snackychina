@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>LeanCloud</title>
+  <link href="https://dn-avoscloud.qbox.me/statics/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    h3 {
+      text-align: center;
+      margin-top: 50px;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+
+<div class=" container">
+  <h3 id="tip" style="display:none"></h3>
+  <!-- <h3 id="tip">Test</h3> -->
+
+
+
+</div><!--end container-->
+<script src="https://dn-avoscloud.qbox.me/statics/jquery.min.js"></script>
+<script src="https://dn-avoscloud.qbox.me/statics/jquery.jsonp.js"></script>
+
+<script type="text/javascript">
+  var url = "https://us.leancloud.cn/1.1/verifyEmail/";
+  var tip_success ="Your email has been verified!";
+  function getParam() {
+    var prmstr = window.location.search.substr(1);us
+    var prmarr = prmstr.split("&");
+    var params = {};
+
+    for (var i = 0; i < prmarr.length; i++) {
+      var tmparr = prmarr[i].split("=");
+      params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+  }
+
+
+  var token = location.search.match(/token=(\w*)/);
+  if(token&&token[1]){
+    token = token[1];
+  }
+  function verify(){
+    if(!token){
+      return;
+    }
+    $.jsonp({
+      url:url+token,
+      callbackParameter: "callback",
+      cache: false,
+      success:function(result){
+        $("#tip").show();
+        if(result.error){
+          $("#tip").text('sorry,some error happened, please try resend or contact us');
+        }else{
+          $("#tip").html(tip_success);
+          setTimeout(function () {
+            location.href= 'https://snackychina.com'
+          }, 1000)
+        }
+      },
+      error:function(result,text){
+        $("#tip").text("Server error");
+      }
+    });
+  }
+
+  $(function(){
+    verify();
+  })
+
+</script>
+
+</body>
+</html>
